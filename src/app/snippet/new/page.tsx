@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation'
 import { format } from 'path'
 import React, { useActionState } from 'react'
 import * as actions from '@/actions'
-const page = () => {
+const Page = () => {
   const[formStateData,action]=useActionState(actions.createSnippet,{message:""})
  
  
@@ -57,4 +57,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
