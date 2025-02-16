@@ -1,5 +1,4 @@
 'use client';
-import { useRouter } from 'next/navigation'
 import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import type { Snippets } from '@prisma/client';
@@ -8,9 +7,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import * as actions from '@/actions';
 
-
 const EditSnippet = ({ snippet }: { snippet: Snippets }) => {
-    const router = useRouter()
   const [code, setCode] = useState(snippet.code);
   const [title, setTitle] = useState(snippet.title);
   const [isSaving, setIsSaving] = useState(false);
@@ -21,10 +18,17 @@ const EditSnippet = ({ snippet }: { snippet: Snippets }) => {
     }
   };
 
-const handleSave=actions.saveSnippet.bind(null,snippet.id,code,title)
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await actions.saveSnippet(snippet.id, code, title);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="max-h-screen p-6 bg-gray-100">
-     
       <div className="mb-4">
         <Label htmlFor="title" className="text-lg font-semibold mb-1">
           Title:
@@ -34,23 +38,21 @@ const handleSave=actions.saveSnippet.bind(null,snippet.id,code,title)
           placeholder="Enter Title"
           name="title"
           id="title"
-          value={title} 
-          onChange={(e) => setTitle(e.target.value)} 
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
         />
       </div>
 
-    
       <Editor
         height="70vh"
         theme="vs-dark"
         defaultLanguage="javascript"
-        value={code} 
+        value={code}
         className="mb-4 border rounded"
         onChange={handleCodeChange}
       />
 
-      
       <div className="flex justify-end">
         <Button
           onClick={handleSave}
