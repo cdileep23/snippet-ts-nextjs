@@ -5,6 +5,7 @@ import Link from 'next/link'
 import * as actions from "@/actions"
 
 import React from 'react'
+import { notFound } from 'next/navigation'
 
 
 const page = async({
@@ -13,6 +14,7 @@ const page = async({
     params: Promise<{ id: string }>
   }) => {
     const id=parseInt((await params).id)
+    await new Promise((r) => setTimeout(r, 2000));
 
     const res=await prisma.snippets.findUnique({
         where:{
@@ -24,7 +26,7 @@ const page = async({
 const HandleDeleteAction=actions.deleteSnippet.bind(null,id)
 console.log("after")
     if(!res){
-        <h1>No Snippet Found</h1>
+       notFound()
     }
   return (
     <div>
@@ -47,3 +49,10 @@ console.log("after")
 }
 
 export default page
+
+export const generateStaticParams=async()=>{
+  const snippets=await prisma.snippets.findMany()
+  return snippets.map((e)=>{
+    return {id:e.id.toString()}
+})
+}

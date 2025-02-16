@@ -1,4 +1,4 @@
-
+'use client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -6,31 +6,17 @@ import { prisma } from '@/lib/prisma'
 import { Label } from '@radix-ui/react-label'
 import { redirect } from 'next/navigation'
 import { format } from 'path'
-import React from 'react'
-
+import React, { useActionState } from 'react'
+import * as actions from '@/actions'
 const page = () => {
- async function  createSnippet(formData:FormData){
-    'use server'
-  const title=formData.get("title") as string
-
-  const code=formData.get("code") as string
-
-  const s=await prisma.snippets.create({
-    data:{
-        title,code
-    }
-  })
-  console.log("created Snippet", s)
-  redirect("/")
-  
-
- }
+  const[formStateData,action]=useActionState(actions.createSnippet,{message:""})
+ 
  
   return (
     <div className="h-auto flex flex-col items-center justify-center bg-gray-100 p-6">
     <h1 className="text-4xl font-serif text-center mb-6">Create new Snippet</h1>
   
-    <form action={createSnippet} className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-lg">
+    <form action={action} className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-lg">
       <div className="flex flex-col space-y-4">
       
         <div className="flex flex-col">
@@ -60,6 +46,9 @@ const page = () => {
         </div>
         <div className='flex justify-end'>
             <Button type='submit'>Add</Button>
+        </div>
+        <div className='text-red-600'>
+          {formStateData.message}
         </div>
       </div>
     </form>

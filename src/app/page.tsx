@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 
 import Link from "next/link";
 
+// export const dynamic="force-dynamic"//disabling caching features (making dynaic route)
+// export const revalidate=0;//everytime fresh data(disabling caching)
 
 export default async  function Home() {
 const snippets=await prisma.snippets.findMany();
